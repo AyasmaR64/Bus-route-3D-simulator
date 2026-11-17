@@ -2,7 +2,7 @@
   "name": "3D Bus Route Simulator — Balangoda",
   "short_name": "3D Bus BLGD",
   "description": "Offline-capable 3D bus route simulator for the Balangoda - Welioya - Hambegamuwa corridor",
-  "start_url": "./simulator_3d.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",
   "orientation": "any",
