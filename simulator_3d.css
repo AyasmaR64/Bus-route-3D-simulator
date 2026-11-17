@@ -1,0 +1,392 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+#pwa-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #00153d;
+  color: #ffffff;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
+  overflow: hidden;
+}
+
+#pwa-splash.splash-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Bus SVG Wrapper */
+.splash-bus {
+  width: 120px;
+  height: 120px;
+  color: #ffffff;
+  overflow: visible;
+  z-index: 2;
+}
+
+/* =========================================
+       BUS BODY & TYRE ANIMATION SEQUENCE
+       ========================================= */
+.splash-bus #bus-body {
+  fill: rgb(255, 255, 255);
+  animation: bus-body-step 1s infinite ease-in-out;
+}
+
+.splash-bus #wheel-left,
+.splash-bus #wheel-right {
+  fill: #e0e0e0;
+  animation: bus-tyres-step 1s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+/* Sequence:
+       0%:   Center starting position (0px, 0px) -> Tyres neutral width
+       25%:  Up 15px, Left 10px (-10px, -15px) -> Tyres normal width
+       50%:  Center down position (0px, 0px) -> Tyres wider (+2px feel via scaleX)
+       75%:  Up 15px, Right 10px (10px, -15px) -> Tyres normal width
+       100%: Center down position (0px, 0px) -> Tyres wider (+2px feel via scaleX) */
+@keyframes bus-body-step {
+  0%,
+  50%,
+  100% {
+    transform: translate(0px, 30px);
+  }
+  25% {
+    transform: translate(-10px, 15px);
+  }
+  50% {
+    transform: translate(0px, 30px);
+  }
+  75% {
+    transform: translate(10px, 15px);
+  }
+}
+
+@keyframes bus-tyres-step {
+  0% {
+    transform: translateX(0px) scaleX(1);
+  }
+  25% {
+    transform: translateX(-11px) scaleX(1);
+  }
+  50% {
+    transform: translateX(0px) scaleX(1.01);
+  }
+  75% {
+    transform: translateX(11px) scaleX(1);
+  }
+  100% {
+    transform: translateX(0px) scaleX(1.01);
+  }
+}
+
+/* =========================================
+       WINDSHIELD WIPER ANIMATIONS
+       ========================================= */
+.splash-bus #wiper-left {
+  fill: #b0b0b0;
+  transform-origin: 130px 292px;
+  animation: wipe-sweep-left 1.3s infinite ease-in-out;
+}
+
+.splash-bus #wiper-right {
+  fill: #b0b0b0ff;
+  transform-origin: 382px 292px;
+  animation: wipe-sweep-right 1.3s infinite ease-in-out;
+}
+@keyframes wipe-sweep-left {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  45%,
+  55% {
+    transform: rotate(0deg);
+  }
+}
+@keyframes wipe-sweep-right {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  45%,
+  55% {
+    transform: rotate(0deg);
+  }
+}
+
+/* =========================================
+       LABELS
+       ========================================= */
+.splash-title {
+  margin-top: 16px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  z-index: 2;
+}
+
+.splash-status {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #d2d2d2;
+  z-index: 2;
+}
+
+#pwa-install-banner {
+  display: none; /* Toggled via JS */
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #ffffff;
+  color: #1c1c1e;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  border: 1px solid #e5e5ea;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 9999;
+}
+
+.pwa-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+#pwa-install-btn {
+  display: none; /* Shown only on Android/Desktop Chrome */
+  background: #007aff;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#pwa-close-btn {
+  background: none;
+  border: none;
+  color: #8e8e93;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+#sim-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #c4d7f2;
+}
+
+/* Top HUD */
+.hud-top {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.hud-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+  animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
+.hud-brand h1 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fef08a;
+}
+
+.hud-brand p {
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.hud-stats {
+  display: flex;
+  gap: 8px;
+}
+
+.stat-box {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 5px 10px;
+  min-width: 78px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.stat-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.status-moving {
+  color: #4ade80;
+}
+.status-stopped {
+  color: #facc15;
+}
+
+/* Bottom HUD */
+.hud-bottom {
+  position: absolute;
+  bottom: 14px;
+  left: 12px;
+  right: 12px;
+  z-index: 10;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.progress-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444, #f59e0b);
+  border-radius: 999px;
+  transition: width 0.1s linear;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  flex: 1;
+  min-width: 72px;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.1s ease,
+    opacity 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background: #334155;
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}

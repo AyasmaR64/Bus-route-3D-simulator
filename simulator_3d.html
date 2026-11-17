@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>3D Bus Route Simulator — Balangoda</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="./lib/maplibre-gl.css" />
+    <link rel="stylesheet" href="simulator_3d.css" />
+  </head>
+  <body>
+    <div id="pwa-splash" role="status" aria-live="polite">
+      <!-- Scene Container -->
+      <div class="bus-scene">
+        <div class="splash-bus">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+            width="100%"
+            height="100%"
+          >
+            <defs>
+              <mask id="bus-cutouts">
+                <rect width="512" height="512" fill="#ffffff" />
+                <path
+                  d="M 103 66 Q 256 62 409 66 Q 421 68 421 86 L 421 107 Q 421 115 413 115 L 99 115 Q 91 115 91 107 L 91 86 Q 91 68 103 66 Z"
+                  fill="black"
+                />
+                <rect
+                  x="81"
+                  y="125"
+                  width="350"
+                  height="164"
+                  rx="12"
+                  fill="#000000"
+                />
+                <rect
+                  x="65"
+                  y="332"
+                  width="76"
+                  height="26"
+                  rx="5"
+                  fill="#000000"
+                />
+                <rect
+                  x="371"
+                  y="332"
+                  width="76"
+                  height="26"
+                  rx="5"
+                  fill="black"
+                />
+              </mask>
+              <clipPath id="windshield-clip">
+                <rect x="81" y="125" width="350" height="167" rx="12" />
+              </clipPath>
+            </defs>
+
+            <!-- Wheels / Tyres -->
+            <g id="bus-wheels" fill="currentColor">
+              <path
+                id="wheel-left"
+                d="M 76 392 L 126 392 L 126 452 Q 126 465 113 465 L 89 465 Q 76 465 76 452 Z"
+              />
+              <path
+                id="wheel-right"
+                d="M 386 392 L 436 392 L 436 452 Q 436 465 423 465 L 399 465 Q 386 465 386 452 Z"
+              />
+            </g>
+
+            <!-- Bus Body & Wipers -->
+            <g id="bus-body" fill="currentColor">
+              <g mask="url(#bus-cutouts)">
+                <path
+                  id="chassis"
+                  d="M 96 52 Q 256 44 416 52 Q 441 55 441 88 L 441 392 Q 441 414 419 414 L 93 414 Q 71 414 71 392 L 71 88 Q 71 55 96 52 Z"
+                />
+                <rect
+                  id="mirror-left"
+                  x="36"
+                  y="135"
+                  width="30"
+                  height="80"
+                  rx="6"
+                />
+                <rect x="62" y="148" width="12" height="14" />
+                <rect
+                  id="mirror-right"
+                  x="446"
+                  y="135"
+                  width="30"
+                  height="80"
+                  rx="6"
+                />
+                <rect x="438" y="148" width="12" height="14" />
+              </g>
+
+              <g
+                id="wipers"
+                clip-path="url(#windshield-clip)"
+                stroke="currentColor"
+                stroke-linecap="round"
+                fill="currentColor"
+              >
+                <g id="wiper-left">
+                  <line x1="130" y1="292" x2="162" y2="274" stroke-width="9" />
+                  <line x1="130" y1="276" x2="289" y2="269" stroke-width="10" />
+                </g>
+                <g id="wiper-right">
+                  <line x1="382" y1="292" x2="348" y2="278" stroke-width="9" />
+                  <line x1="234" y1="278" x2="387" y2="279" stroke-width="10" />
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="splash-title">3D Bus Route Simulator</div>
+      <div id="splash-status-text" class="splash-status">
+        Loading offline routes...
+      </div>
+    </div>
+    <div id="pwa-install-banner" role="region" aria-label="Install App">
+      <div id="pwa-banner-text"></div>
+      <div class="pwa-banner-actions">
+        <button id="pwa-install-btn">Install</button>
+        <button id="pwa-close-btn" aria-label="Dismiss install banner">
+          &times;
+        </button>
+      </div>
+    </div>
+    <!-- MapLibre GL JS Background Map -->
+    <div id="sim-map"></div>
+
+    <!-- Top Telemetry & Controls HUD -->
+    <div class="hud-top">
+      <div class="hud-brand">
+        <span class="live-indicator"></span>
+        <div>
+          <h1>BL-01 Live 3D Bus</h1>
+          <p id="routeSubtitle">බලංගොඩ - වේලිඔය - හම්බෙගමුව</p>
+        </div>
+      </div>
+
+      <div class="hud-stats">
+        <div class="stat-box">
+          <span class="stat-label">SPEED</span>
+          <span id="speedDisplay" class="stat-val">42 km/h</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">NEXT STOP</span>
+          <span id="nextStopDisplay" class="stat-val">Kirimatitenna</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">STATUS</span>
+          <span id="statusDisplay" class="stat-val status-moving"
+            >Cruising</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Controls & Progress Bar -->
+    <div class="hud-bottom">
+      <div class="progress-row">
+        <span id="progressText">0.0 / 0.0 km</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+
+      <div class="control-buttons">
+        <button id="playPauseBtn" class="btn btn-primary">Pause</button>
+        <button id="cameraModeBtn" class="btn btn-secondary">
+          Camera: Chase
+        </button>
+        <button id="busLiveryBtn" class="btn btn-secondary">
+          Livery: SLTB
+        </button>
+        <button id="resetBtn" class="btn btn-secondary">Reset</button>
+      </div>
+    </div>
+
+    <!-- Local Offline Libraries -->
+    <script src="./lib/pmtiles.js"></script>
+    <script src="./lib/maplibre-gl.js"></script>
+    <script src="./lib/turf.min.js"></script>
+    <script src="./lib/three.min.js"></script>
+    <script src="simulator_3d.js"></script>
+  </body>
+</html>
