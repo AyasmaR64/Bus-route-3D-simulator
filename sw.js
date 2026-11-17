@@ -39,7 +39,7 @@ const STATIC_ASSETS = [
   "./assets/sprites/basics/sprites.json",
   "./assets/sprites/basics/sprites.png",
   "./assets/sprites/basics/sprites@2x.json",
-  "./assets/sprites/basics/sprites@2x.png",
+  "./assets/sprites/basics/sprites@2x.png"
 ];
 
 // Install: Pre-cache all simulator, map, font, sprite, and PMTiles assets
