@@ -1,7 +1,7 @@
 const CACHE_NAME = "bus-sim-3d-balangoda-v1";
 const STATIC_ASSETS = [
   "./",
-  "./simulator_3d.html",
+  "./index.html",
   "./simulator_3d.css",
   "./simulator_3d.js",
   "./manifest.json",
